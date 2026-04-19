@@ -29,12 +29,13 @@ export async function analyzeWildlifeImage(imageData?: string, sampleSpecies?: s
         },
       },
       {
-        text: "Analyze this image for wildlife. Identify the species, its habitat, its apparent physical condition, and assess environmental risks. Return the data in the specified JSON format."
+        text: "Analyze this image for wildlife. Identify the species, its habitat, its apparent physical condition, and assess environmental risks. Return a riskScore as a number between 0 and 100 where 100 is maximum critical risk. Return the data in the specified JSON format."
       }
     ];
   } else {
     prompt = `Analyze the typical conservation profile for the species: "${sampleSpecies || 'Endangered Wildlife'}". 
     Provide localized data for habitat, physical condition checks, and environmental risks. 
+    Ensure the riskScore is a number between 0 and 100.
     Return the data in the specified JSON format.`;
     contents = [{ text: prompt }];
   }
@@ -62,7 +63,10 @@ export async function analyzeWildlifeImage(imageData?: string, sampleSpecies?: s
             } 
           },
           scientificReasoning: { type: Type.STRING },
-          riskScore: { type: Type.NUMBER },
+          riskScore: { 
+            type: Type.NUMBER,
+            description: "A calculated risk score between 0 and 100 based on threats and condition."
+          },
         },
         required: ["species", "habitat", "condition", "conservationStatus", "environmentalThreats", "scientificReasoning", "riskScore"],
       },
